@@ -1,0 +1,286 @@
+<div class="apidocDiv">
+<style>
+/*csslint
+*/
+.apidocDiv {
+    background: #fff;
+    font-family: Arial, Helvetica, sans-serif;
+}
+.apidocDiv a[href] {
+    color: #33f;
+    font-weight: bold;
+    text-decoration: none;
+}
+.apidocDiv a[href]:hover {
+    text-decoration: underline;
+}
+.apidocCodeCommentSpan {
+    background: #bbf;
+    color: #000;
+    display: block;
+}
+.apidocCodeKeywordSpan {
+    color: #d00;
+    font-weight: bold;
+}
+.apidocCodePre {
+    background: #eef;
+    border: 1px solid;
+    color: #777;
+    padding: 5px;
+    white-space: pre-wrap;
+}
+.apidocFooterDiv {
+    margin-top: 20px;
+    text-align: center;
+}
+.apidocModuleLi {
+    margin-top: 10px;
+}
+.apidocSectionDiv {
+    border-top: 1px solid;
+    margin-top: 20px;
+}
+.apidocSignatureSpan {
+    color: #777;
+    font-weight: bold;
+}
+</style>
+<h1>api documentation for
+    <a
+
+        href="https://github.com/buglabs/node-xml2json#readme"
+
+    >xml2json (v0.11.0)</a>
+</h1>
+<h4>Converts xml to json and vice-versa, using node-expat.</h4>
+<div class="apidocSectionDiv"><a
+    href="#apidoc.tableOfContents"
+    id="apidoc.tableOfContents"
+><h1>table of contents</h1></a><ol>
+
+    <li class="apidocModuleLi"><a href="#apidoc.module.xml2json">module xml2json</a><ol>
+
+        <li>
+
+            <a class="apidocElementLiA" href="#apidoc.element.xml2json.toJson">
+            function <span class="apidocSignatureSpan">xml2json.</span>toJson
+            <span class="apidocSignatureSpan">(xml, _options)</span>
+            </a>
+
+        </li>
+
+        <li>
+
+            <a class="apidocElementLiA" href="#apidoc.element.xml2json.toXml">
+            function <span class="apidocSignatureSpan">xml2json.</span>toXml
+            <span class="apidocSignatureSpan">(json, options)</span>
+            </a>
+
+        </li>
+
+        <li>
+
+            <span class="apidocSignatureSpan">object <span class="apidocSignatureSpan">xml2json.</span>sanitize</span>
+
+        </li>
+
+    </ol></li>
+
+    <li class="apidocModuleLi"><a href="#apidoc.module.xml2json.sanitize">module xml2json.sanitize</a><ol>
+
+        <li>
+
+            <a class="apidocElementLiA" href="#apidoc.element.xml2json.sanitize.sanitize">
+            function <span class="apidocSignatureSpan">xml2json.</span>sanitize
+            <span class="apidocSignatureSpan">(value, reverse)</span>
+            </a>
+
+        </li>
+
+    </ol></li>
+
+</ol></div>
+
+<div class="apidocSectionDiv">
+<h1><a href="#apidoc.module.xml2json" id="apidoc.module.xml2json">module xml2json</a></h1>
+
+
+    <h2>
+        <a href="#apidoc.element.xml2json.toJson" id="apidoc.element.xml2json.toJson">
+        function <span class="apidocSignatureSpan">xml2json.</span>toJson
+        <span class="apidocSignatureSpan">(xml, _options)</span>
+        </a>
+    </h2>
+    <ul>
+    <li>description and source-code<pre class="apidocCodePre">toJson = function (xml, _options) {
+
+    _options = _options || {};
+    var parser = new expat.Parser(&#x27;UTF-8&#x27;);
+
+    parser.on(&#x27;startElement&#x27;, startElement);
+    parser.on(&#x27;text&#x27;, text);
+    parser.on(&#x27;endElement&#x27;, endElement);
+
+    obj = currentObject = {};
+    ancestors = [];
+    currentElementName = null;
+
+    var schema = {
+        object: joi.boolean().default(false),
+        reversible: joi.boolean().default(false),
+        coerce: joi.alternatives([joi.boolean(), joi.object()]).default(false),
+        sanitize: joi.boolean().default(true),
+        trim: joi.boolean().default(true),
+        arrayNotation: joi.alternatives([joi.boolean(), joi.array()]).default(false),
+        alternateTextNode: [joi.boolean().default(false), joi.string().default(false)]
+    };
+    var validation = joi.validate(_options, schema);
+    hoek.assert(validation.error === null, validation.error);
+    options = validation.value;
+    options.forceArrays = {};
+    if (Array.isArray(options.arrayNotation)) {
+        options.arrayNotation.forEach(function(i) {
+            options.forceArrays[i] = true;
+        });
+        options.arrayNotation = false;
+    }
+    if (!parser.parse(xml)) {
+        throw new Error(&#x27;There are errors in your xml file: &#x27; + parser.getError());
+    }
+
+    if (options.object) {
+        return obj;
+    }
+
+    var json = JSON.stringify(obj);
+
+    //See: http://timelessrepo.com/json-isnt-a-javascript-subset
+    json = json.replace(/\u2028/g, &#x27;\\u2028&#x27;).replace(/\u2029/g, &#x27;\\u2029&#x27;);
+
+    return json;
+}</pre></li>
+    <li>example usage<pre class="apidocCodePre">...
+```javascript
+var parser = require(&#x27;xml2json&#x27;);
+
+var xml = &#x22;&#x3c;foo attr=\&#x22;value\&#x22;&#x3e;bar&#x3c;/foo&#x3e;&#x22;;
+console.log(&#x22;input -&#x3e; %s&#x22;, xml)
+
+// xml to json
+var json = parser.<span class="apidocCodeKeywordSpan">toJson</span>(xml);
+console.log(&#x22;to json -&#x3e; %s&#x22;, json);
+
+// json to xml
+var xml = parser.toXml(json);
+console.log(&#x22;back to xml -&#x3e; %s&#x22;, xml)
+```
+...</pre></li>
+    </ul>
+
+
+
+    <h2>
+        <a href="#apidoc.element.xml2json.toXml" id="apidoc.element.xml2json.toXml">
+        function <span class="apidocSignatureSpan">xml2json.</span>toXml
+        <span class="apidocSignatureSpan">(json, options)</span>
+        </a>
+    </h2>
+    <ul>
+    <li>description and source-code<pre class="apidocCodePre">toXml = function (json, options) {
+    if (json instanceof Buffer) {
+        json = json.toString();
+    }
+
+    var obj = null;
+    if (typeof(json) == &#x27;string&#x27;) {
+        try {
+            obj = JSON.parse(json);
+        } catch(e) {
+            throw new Error(&#x22;The JSON structure is invalid&#x22;);
+        }
+    } else {
+        obj = json;
+    }
+    var toXml = new ToXml(options);
+    toXml.parse(obj);
+    return toXml.xml;
+}</pre></li>
+    <li>example usage<pre class="apidocCodePre">...
+console.log(&#x22;input -&#x3e; %s&#x22;, xml)
+
+// xml to json
+var json = parser.toJson(xml);
+console.log(&#x22;to json -&#x3e; %s&#x22;, json);
+
+// json to xml
+var xml = parser.<span class="apidocCodeKeywordSpan">toXml</span>(json);
+console.log(&#x22;back to xml -&#x3e; %s&#x22;, xml)
+```
+
+## API
+
+```javascript
+parser.toJson(xml, options);
+...</pre></li>
+    </ul>
+
+
+
+
+</div>
+
+<div class="apidocSectionDiv">
+<h1><a href="#apidoc.module.xml2json.sanitize" id="apidoc.module.xml2json.sanitize">module xml2json.sanitize</a></h1>
+
+
+    <h2>
+        <a href="#apidoc.element.xml2json.sanitize.sanitize" id="apidoc.element.xml2json.sanitize.sanitize">
+        function <span class="apidocSignatureSpan">xml2json.</span>sanitize
+        <span class="apidocSignatureSpan">(value, reverse)</span>
+        </a>
+    </h2>
+    <ul>
+    <li>description and source-code<pre class="apidocCodePre">function sanitize(value, reverse) {
+    if (typeof value !== &#x27;string&#x27;) {
+        return value;
+    }
+
+    Object.keys(chars).forEach(function(key) {
+        if (reverse) {
+            value = value.replace(new RegExp(escapeRegExp(chars[key]), &#x27;g&#x27;), key);
+        } else {
+            value = value.replace(new RegExp(escapeRegExp(key), &#x27;g&#x27;), chars[key]);
+        }
+    });
+
+    return value;
+}</pre></li>
+    <li>example usage<pre class="apidocCodePre">...
+ToXml.prototype.openTag = function(key) {
+    this.completeTag();
+    this.xml += &#x27;&#x3c;&#x27; + key;
+    this.tagIncomplete = true;
+}
+ToXml.prototype.addAttr = function(key, val) {
+    if (this.options.sanitize) {
+        val = sanitizer.<span class="apidocCodeKeywordSpan">sanitize</span>(val)
+    }
+    this.xml += &#x27; &#x27; + key + &#x27;=&#x22;&#x27; + val + &#x27;&#x22;&#x27;;
+}
+ToXml.prototype.addTextContent = function(text) {
+    this.completeTag();
+    this.xml += text;
+}
+...</pre></li>
+    </ul>
+
+
+</div>
+
+<div class="apidocFooterDiv">
+    [ this document was created with
+    <a href="https://github.com/kaizhu256/node-utility2" target="_blank">utility2</a>
+    ]
+</div>
+</div>
