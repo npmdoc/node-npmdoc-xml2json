@@ -1,6 +1,6 @@
 # npmdoc-xml2json
 
-#### api documentation for  [xml2json (v0.11.0)](https://github.com/buglabs/node-xml2json#readme)  [![npm package](https://img.shields.io/npm/v/npmdoc-xml2json.svg?style=flat-square)](https://www.npmjs.org/package/npmdoc-xml2json) [![travis-ci.org build-status](https://api.travis-ci.org/npmdoc/node-npmdoc-xml2json.svg)](https://travis-ci.org/npmdoc/node-npmdoc-xml2json)
+#### basic api documentation for  [xml2json (v0.11.0)](https://github.com/buglabs/node-xml2json#readme)  [![npm package](https://img.shields.io/npm/v/npmdoc-xml2json.svg?style=flat-square)](https://www.npmjs.org/package/npmdoc-xml2json) [![travis-ci.org build-status](https://api.travis-ci.org/npmdoc/node-npmdoc-xml2json.svg)](https://travis-ci.org/npmdoc/node-npmdoc-xml2json)
 
 #### Converts xml to json and vice-versa, using node-expat.
 
